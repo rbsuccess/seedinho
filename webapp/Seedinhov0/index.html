@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #E7EAE6; color: #0E1B14; -webkit-font-smoothing: antialiased; }
+  a { color: #02562d; text-decoration: none; }
+  a:hover { color: #0A6E3B; }
+  ::selection { background: #C7E3D2; }
+  input { font-family: inherit; }
+  input:focus { outline: none; border-color: #02562d !important; box-shadow: 0 0 0 3px rgba(2,86,45,.12); }
+  .sd-scroll::-webkit-scrollbar { width: 0; height: 0; }
+  @keyframes sdFadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes sdScreenIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes sdWave { 0%,100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+  @keyframes sdBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes sdPop { 0% { transform: scale(.5); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes sdOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sdModalIn { from { opacity: 0; transform: scale(.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; background: #E7EAE6;">
+<div style="width: 100%; max-width: 420px; min-height: 100vh; background: #FFFFFF; position: relative; box-shadow: 0 24px 80px rgba(2,86,45,.12); overflow: hidden;">
+
+<audio ref="{{ setAudioRef }}" src="assets/debrief.mp3" preload="metadata" style="display:none;"></audio>
+
+<!-- ============ LANDING ============ -->
+<sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+<div style="animation: sdScreenIn .45s ease both; min-height: 100vh; display: flex; flex-direction: column; padding: 26px 24px 34px;">
+  <div style="display: flex; align-items: center; justify-content: center;">
+    <img src="assets/logo-text-green.svg" alt="Seedinho" style="height: 21px;">
+  </div>
+
+  <!-- team hero: carrousel portrait joueurs (couleur, auto-scroll + swipe) -->
+  <div style="margin: 26px -24px 0; position: relative;">
+    <div ref="{{ setCarRef }}" class="sd-scroll" style="display: flex; gap: 12px; overflow-x: auto; scroll-behavior: auto; padding: 4px 24px; -webkit-overflow-scrolling: touch;">
+      <sc-for list="{{ landingGrid }}" as="m" hint-placeholder-count="11">
+        <div style="flex: none; width: 132px; height: 178px; border-radius: 20px; overflow: hidden; position: relative; background: #1A2E22; box-shadow: 0 10px 26px rgba(2,86,45,.14);">
+          <sc-if value="{{ m.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ m.photo }}" alt="" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+          <sc-if value="{{ m.noPhoto }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:44px;font-weight:800;color:rgba(255,255,255,.5);">{{ m.initial }}</span></sc-if>
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 62%; background: linear-gradient(to top, rgba(6,14,10,.9), rgba(6,14,10,0)); pointer-events: none;"></div>
+          <div style="position: absolute; left: 11px; right: 11px; bottom: 11px; display: flex; align-items: baseline; gap: 7px;">
+            <span style="font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -0.01em;">{{ m.name }}</span>
+            <span style="font-size: 12px; font-weight: 700; color: rgba(255,255,255,.7); font-variant-numeric: tabular-nums;">#{{ m.num }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 26px 0 6px;">
+    <h1 style="font-size: 30px; line-height: 1.16; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 16px; text-wrap: balance;">
+      Donner à chaque joueur amateur un suivi digne d'un centre de formation.
+    </h1>
+    <p style="font-size: 15.5px; line-height: 1.5; color: #6B7280; margin: 0;">
+      Le staff numérique qui transforme le débrief du coach en suivi pour chaque joueur.
+    </p>
+  </div>
+
+  <div style="padding-top: 18px;">
+    <button onClick="{{ goDemo }}" style="width: 100%; border: none; background: #02562d; color: #fff; font-family: inherit; font-size: 16px; font-weight: 600; padding: 17px; border-radius: 16px; cursor: pointer; transition: transform .12s ease, background .15s ease; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 26px rgba(2,86,45,.22);" style-hover="background: #0A6E3B;" style-active="transform: scale(.98);">
+      Découvrir la démonstration
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg>
+    </button>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 18px;">
+      <span style="flex: none; width: 26px; height: 26px; border-radius: 8px; background: #0E1B14; display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="assets/crests/montreuil.png" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+      <span style="font-size: 13px; font-weight: 600; color: #0E1B14;">AS Montreuil FC</span>
+      <span style="font-size: 13px; font-weight: 700; color: #6B7280; font-variant-numeric: tabular-nums;">0 – 2</span>
+      <span style="font-size: 13px; font-weight: 600; color: #0E1B14;">AC Rivière</span>
+      <span style="flex: none; width: 26px; height: 26px; border-radius: 8px; background: #0E1B14; display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="assets/crests/riviere.png" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ DEMO (parle au coach) ============ -->
+<sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+<div style="animation: sdScreenIn .45s ease both;">
+  <div style="position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); border-bottom: 1px solid #EEF0F2; height: 56px; display: flex; align-items: center; padding: 0 14px;">
+    <button onClick="{{ goLanding }}" aria-label="Retour" style="border: none; background: transparent; padding: 8px; margin: -8px; cursor: pointer; color: #0E1B14; display: flex;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <img src="assets/logo-text-green.svg" alt="Seedinho" style="height: 16px; position: absolute; left: 50%; transform: translateX(-50%);">
+  </div>
+
+  <div style="padding: 24px 24px 118px;">
+    <p style="font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #02562d; text-transform: uppercase; margin: 0 0 10px;">DÉMONSTRATION (EXTRAIT DE 20 SECONDES)</p>
+    <h2 style="font-size: 23px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.24; margin: 0 0 8px;">Après le match, une note vocale de 2 minutes.</h2>
+    <p style="font-size: 15px; color: #6B7280; line-height: 1.5; margin: 0 0 18px;">Faîtes votre débrief à voix haute, joueur par joueur — Seedinho écrit un rapport pour chacun.</p>
+
+    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 22px;">
+      <span style="flex: none; width: 24px; height: 24px; border-radius: 7px; background: #0E1B14; display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="assets/crests/montreuil.png" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+      <span style="font-size: 12.5px; font-weight: 600; color: #0E1B14;">AS Montreuil FC</span>
+      <span style="font-size: 12.5px; font-weight: 700; color: #6B7280;">0 – 2</span>
+      <span style="font-size: 12.5px; font-weight: 600; color: #0E1B14;">AC Rivière</span>
+      <span style="flex: none; width: 24px; height: 24px; border-radius: 7px; background: #0E1B14; display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="assets/crests/riviere.png" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+    </div>
+
+    <!-- AudioPlayer -->
+    <div style="border: 1px solid #EEF0F2; border-radius: 22px; padding: 20px; box-shadow: 0 8px 24px rgba(2,86,45,.06);">
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <button onClick="{{ toggleDemo }}" aria-label="Lecture" style="flex: none; width: 58px; height: 58px; border-radius: 999px; border: none; background: #02562d; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform .12s ease;" style-active="transform: scale(.94);" style-hover="background: #0A6E3B;">
+          <sc-if value="{{ demo.playing }}" hint-placeholder-val="{{ false }}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+          </sc-if>
+          <sc-if value="{{ demo.notPlaying }}" hint-placeholder-val="{{ true }}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="margin-left: 3px;"><path d="M7 5.5v13a1 1 0 0 0 1.53.85l10.5-6.5a1 1 0 0 0 0-1.7L8.53 4.65A1 1 0 0 0 7 5.5z"></path></svg>
+          </sc-if>
+        </button>
+        <div style="flex: 1; min-width: 0;">
+          <div style="display: flex; align-items: flex-end; gap: 2.5px; height: 38px;">
+            <sc-for list="{{ demo.bars }}" as="b" hint-placeholder-count="40">
+              <div style="{{ b.style }}"></div>
+            </sc-for>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 9px; font-size: 11.5px; color: #9AA3A0; font-variant-numeric: tabular-nums;">
+            <span>{{ demo.time }}</span>
+            <span>Note vocale · Coach</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transcription (bloc unique) -->
+    <div style="margin-top: 22px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+        <p style="font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: #9AA3A0; text-transform: uppercase; margin: 0;">Transcription</p>
+        <sc-if value="{{ demo.playing }}" hint-placeholder-val="{{ false }}"><span style="display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 700; color: #02562d; letter-spacing: .06em;"><span style="width: 6px; height: 6px; border-radius: 999px; background: #E5484D; display: inline-block; animation: sdBlink 1s step-end infinite;"></span>LIVE</span></sc-if>
+      </div>
+      <div ref="{{ setTranscriptRef }}" class="sd-scroll" style="background: #F7F8FA; border-radius: 18px; padding: 18px; height: 176px; overflow-y: auto; font-size: 14.5px; line-height: 1.62; color: #2A322D;">
+        <span>{{ demo.revealed }}</span><sc-if value="{{ demo.caret }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; width: 2px; height: 15px; background: #02562d; margin-left: 1px; vertical-align: -2px; animation: sdBlink 1s step-end infinite;"></span></sc-if><sc-if value="{{ demo.idle }}" hint-placeholder-val="{{ true }}"><span style="color: #9AA3A0;">Appuyez sur lecture — la transcription s'écrit au fil de la voix du coach…</span></sc-if>
+      </div>
+    </div>
+
+    <!-- Checklist -->
+    <div style="margin-top: 22px;">
+      <p style="font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: #9AA3A0; text-transform: uppercase; margin: 0 0 12px;">Ce que fait Seedinho</p>
+      <div style="display: flex; flex-direction: column; gap: 9px;">
+        <sc-for list="{{ demo.checklist }}" as="c" hint-placeholder-count="4">
+          <div style="{{ c.rowStyle }}">
+            <div style="{{ c.iconStyle }}">
+              <sc-if value="{{ c.done }}" hint-placeholder-val="{{ false }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" style="animation: sdPop .35s ease both;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </sc-if>
+              <sc-if value="{{ c.pending }}" hint-placeholder-val="{{ true }}">
+                <span style="width: 6px; height: 6px; border-radius: 999px; background: #C3CAC6; display: block;"></span>
+              </sc-if>
+            </div>
+            <span style="{{ c.labelStyle }}">{{ c.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- (AdvantageStrip déplacé en pop-up modale, voir plus bas) -->
+  </div>
+
+  <sc-if value="{{ demo.showCta }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; bottom: 0; left: 0; right: 0; max-width: 420px; margin: 0 auto; padding: 16px 24px 24px; background: linear-gradient(to top, #fff 68%, rgba(255,255,255,0)); animation: sdFadeUp .4s ease both;">
+    <button onClick="{{ goRoster }}" style="width: 100%; border: none; background: #02562d; color: #fff; font-family: inherit; font-size: 16px; font-weight: 600; padding: 17px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 26px rgba(2,86,45,.22); transition: transform .12s ease;" style-active="transform: scale(.98);">
+      Voir les rapports
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg>
+    </button>
+  </div>
+  </sc-if>
+
+  <!-- AdvantageStrip en pop-up modale -->
+  <sc-if value="{{ demo.modalOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; max-width: 420px; margin: 0 auto; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 24px;">
+    <div onClick="{{ closeAdvModal }}" style="position: absolute; inset: 0; background: rgba(6,14,10,.62); backdrop-filter: blur(3px); animation: sdOverlayIn .3s ease both;"></div>
+    <div style="position: relative; width: 100%; background: #fff; border-radius: 26px; padding: 24px 22px 22px; box-shadow: 0 30px 70px rgba(0,0,0,.4); animation: sdModalIn .4s cubic-bezier(.2,.8,.2,1) both;">
+      <button onClick="{{ closeAdvModal }}" aria-label="Fermer" style="position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 999px; border: none; background: #F1F2F1; color: #6B7280; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .15s ease;" style-hover="background: #E7EAE6;" style-active="transform: scale(.94);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div style="width: 52px; height: 52px; border-radius: 15px; background: #E9F3ED; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><rect x="7" y="11" width="3" height="6" rx="1"></rect><rect x="12.5" y="7" width="3" height="10" rx="1"></rect><rect x="18" y="13" width="3" height="4" rx="1"></rect></svg>
+      </div>
+      <p style="font-size: 11.5px; font-weight: 600; letter-spacing: .08em; color: #02562d; text-transform: uppercase; margin: 0 0 6px;">Ce que ça vous fait gagner</p>
+      <h3 style="font-size: 20px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; margin: 0 0 18px;">En 2 minutes, le travail d'un staff.</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin-bottom: 20px;">
+        <div style="border: 1px solid #E1EDE6; border-radius: 18px; padding: 16px; background: #FBFDFC;">
+          <div style="font-size: 25px; font-weight: 800; letter-spacing: -0.03em; color: #02562d; font-variant-numeric: tabular-nums;">{{ demo.adv1 }}</div>
+          <div style="font-size: 12.5px; color: #6B7280; margin-top: 5px; line-height: 1.4;">au lieu de 30 min à la main</div>
+        </div>
+        <div style="border: 1px solid #E1EDE6; border-radius: 18px; padding: 16px; background: #FBFDFC;">
+          <div style="font-size: 25px; font-weight: 800; letter-spacing: -0.03em; color: #02562d; font-variant-numeric: tabular-nums;">{{ demo.adv2 }}</div>
+          <div style="font-size: 12.5px; color: #6B7280; margin-top: 5px; line-height: 1.4;">gagnées à chaque match</div>
+        </div>
+        <div style="border: 1px solid #E1EDE6; border-radius: 18px; padding: 16px; background: #FBFDFC;">
+          <div style="font-size: 25px; font-weight: 800; letter-spacing: -0.03em; color: #02562d; font-variant-numeric: tabular-nums;">{{ demo.adv3 }}</div>
+          <div style="font-size: 12.5px; color: #6B7280; margin-top: 5px; line-height: 1.4;">sur vos 5 derniers matchs</div>
+        </div>
+        <div style="border: 1px solid #E1EDE6; border-radius: 18px; padding: 16px; background: #FBFDFC;">
+          <div style="font-size: 25px; font-weight: 800; letter-spacing: -0.03em; color: #02562d; font-variant-numeric: tabular-nums;">{{ demo.adv4 }}</div>
+          <div style="font-size: 12.5px; color: #6B7280; margin-top: 5px; line-height: 1.4;">ont bossé leur axe&nbsp;<span style="color: #9AA3A0;">(simulé)</span></div>
+        </div>
+      </div>
+      <button onClick="{{ goRoster }}" style="width: 100%; border: none; background: #02562d; color: #fff; font-family: inherit; font-size: 16px; font-weight: 600; padding: 16px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 26px rgba(2,86,45,.22); transition: transform .12s ease;" style-active="transform: scale(.98);" style-hover="background: #0A6E3B;">
+        Voir les rapports
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg>
+      </button>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- ============ ROSTER ============ -->
+<sc-if value="{{ isRoster }}" hint-placeholder-val="{{ false }}">
+<div style="animation: sdScreenIn .45s ease both;">
+  <div style="position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); border-bottom: 1px solid #EEF0F2; height: 56px; display: flex; align-items: center; padding: 0 14px;">
+    <button onClick="{{ goDemo }}" aria-label="Retour" style="border: none; background: transparent; padding: 8px; margin: -8px; cursor: pointer; color: #0E1B14; display: flex;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <img src="assets/logo-text-green.svg" alt="Seedinho" style="height: 16px; position: absolute; left: 50%; transform: translateX(-50%);">
+  </div>
+
+  <div style="padding: 24px 20px 40px;">
+    <p style="font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #02562d; text-transform: uppercase; margin: 0 0 12px;">Rapports du match</p>
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+      <span style="flex: none; width: 26px; height: 26px; border-radius: 8px; background: #0E1B14; display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="assets/crests/montreuil.png" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+      <span style="font-size: 17px; font-weight: 800; letter-spacing: -0.01em;">AS Montreuil FC</span>
+      <span style="font-size: 17px; font-weight: 800; color: #6B7280; font-variant-numeric: tabular-nums;">0 – 2</span>
+      <span style="font-size: 17px; font-weight: 800; letter-spacing: -0.01em;">AC Rivière</span>
+      <span style="flex: none; width: 26px; height: 26px; border-radius: 8px; background: #0E1B14; display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="assets/crests/riviere.png" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+    </div>
+    <p style="font-size: 13.5px; color: #6B7280; margin: 8px 0 22px;">Système 4-3-3 · 11 rapports individuels prêts</p>
+
+    <div style="display: flex; flex-direction: column; gap: 11px;">
+      <sc-for list="{{ roster }}" as="p" hint-placeholder-count="11">
+        <button onClick="{{ p.open }}" style="{{ p.cardStyle }}">
+          <div style="position: relative; flex: none;">
+            <div style="{{ p.avatarStyle }}">
+              <sc-if value="{{ p.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ p.photo }}" alt="" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+              <sc-if value="{{ p.noPhoto }}" hint-placeholder-val="{{ false }}"><span style="font-size:20px;font-weight:700;color:#02562d;">{{ p.initial }}</span></sc-if>
+            </div>
+            <span style="position: absolute; bottom: -2px; right: -3px; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 999px; background: #0E1B14; border: 2px solid #fff; color: #fff; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums;">{{ p.num }}</span>
+          </div>
+          <div style="flex: 1; min-width: 0; text-align: left;">
+            <div style="font-size: 16.5px; font-weight: 700; letter-spacing: -0.01em; color: #0E1B14;">{{ p.name }}</div>
+            <div style="font-size: 13px; color: #6B7280; margin-top: 2px;">{{ p.poste }}</div>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #02562d; font-weight: 600; margin-top: 6px;">
+              <span style="width: 6px; height: 6px; border-radius: 999px; background: #02562d; display: inline-block;"></span>
+              Rapport prêt
+            </div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C3CAC6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex: none;"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ REPORT (parle au joueur) ============ -->
+<sc-if value="{{ isReport }}" hint-placeholder-val="{{ false }}">
+<div style="animation: sdScreenIn .4s ease both;">
+  <div style="position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); border-bottom: 1px solid #EEF0F2; height: 56px; display: flex; align-items: center; padding: 0 14px;">
+    <button onClick="{{ goRoster }}" aria-label="Retour" style="border: none; background: transparent; padding: 8px; margin: -8px; cursor: pointer; color: #0E1B14; display: flex;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <span style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: 600; color: #0E1B14;">{{ report.name }} · #{{ report.num }}</span>
+  </div>
+
+  <!-- coach preview banner -->
+  <div style="display: flex; align-items: center; gap: 8px; padding: 9px 16px; background: #F1F7F3; border-bottom: 1px solid #E1EDE6;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+    <span style="font-size: 12px; font-weight: 500; color: #02562d;">Aperçu coach — ce que reçoivent vos joueurs</span>
+  </div>
+
+  <div style="padding: 0 0 60px;">
+    <!-- header -->
+    <div style="padding: 24px 22px 22px; background: #02562d; color: #fff; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: -40px; right: -30px; width: 160px; height: 160px; border-radius: 999px; background: rgba(255,255,255,.05);"></div>
+      <div style="position: relative; display: flex; align-items: center; gap: 15px;">
+        <div style="flex: none; width: 68px; height: 68px; border-radius: 999px; border: 2px solid rgba(255,255,255,.35); overflow: hidden; background: rgba(255,255,255,.14); display: flex; align-items: center; justify-content: center;">
+          <sc-if value="{{ report.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ report.photo }}" alt="" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+          <sc-if value="{{ report.noPhoto }}" hint-placeholder-val="{{ false }}"><span style="font-size:26px;font-weight:700;color:#fff;">{{ report.initial }}</span></sc-if>
+        </div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="display: flex; align-items: center; gap: 9px;">
+            <h1 style="font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin: 0;">{{ report.name }}</h1>
+            <span style="font-size: 13px; font-weight: 700; background: rgba(255,255,255,.16); padding: 2px 9px; border-radius: 8px; font-variant-numeric: tabular-nums;">#{{ report.num }}</span>
+          </div>
+          <div style="font-size: 14px; color: rgba(255,255,255,.82); margin-top: 3px;">{{ report.poste }}</div>
+        </div>
+      </div>
+      <div style="position: relative; display: flex; align-items: center; gap: 7px; margin-top: 16px; flex-wrap: wrap;">
+        <span style="flex: none; width: 22px; height: 22px; border-radius: 6px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="assets/crests/montreuil.png" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+        <span style="font-size: 12px; font-weight: 600;">AS Montreuil FC</span>
+        <span style="font-size: 12px; font-weight: 700; color: rgba(255,255,255,.7);">0 – 2</span>
+        <span style="font-size: 12px; font-weight: 600;">AC Rivière</span>
+        <span style="flex: none; width: 22px; height: 22px; border-radius: 6px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="assets/crests/riviere.png" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+        <span style="font-size: 11.5px; color: rgba(255,255,255,.6); margin-left: 2px;">· 4-3-3</span>
+      </div>
+      <sc-if value="{{ report.hasPills }}" hint-placeholder-val="{{ true }}">
+      <div style="position: relative; display: flex; gap: 7px; flex-wrap: wrap; margin-top: 13px;">
+        <sc-for list="{{ report.pills }}" as="pill" hint-placeholder-count="2">
+          <span style="background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.16); color: #fff; font-size: 12px; font-weight: 500; padding: 5px 11px; border-radius: 999px;">{{ pill }}</span>
+        </sc-for>
+      </div>
+      </sc-if>
+    </div>
+
+    <div style="padding: 20px 22px;">
+      <!-- Résumé -->
+      <div style="animation: sdFadeUp .5s ease both; margin-bottom: 14px; border: 1px solid #EEF0F2; border-radius: 22px; padding: 20px; box-shadow: 0 6px 20px rgba(2,86,45,.05);">
+        <p style="font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: #02562d; text-transform: uppercase; margin: 0 0 10px;">Résumé du match</p>
+        <p style="font-size: 15.5px; line-height: 1.6; margin: 0; color: #2A322D;">{{ report.summary }}</p>
+      </div>
+
+      <!-- Contexte (conditional) -->
+      <sc-if value="{{ report.hasContext }}" hint-placeholder-val="{{ false }}">
+      <div style="animation: sdFadeUp .5s ease both; margin-bottom: 14px; border: 1px solid #EEF0F2; border-radius: 22px; padding: 20px; background: #F7F8FA;">
+        <p style="font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: #6B7280; text-transform: uppercase; margin: 0 0 10px;">Le contexte de ton match</p>
+        <p style="font-size: 15px; line-height: 1.6; margin: 0; color: #2A322D;">{{ report.contextText }}</p>
+      </div>
+      </sc-if>
+
+      <!-- Points forts (conditional) -->
+      <sc-if value="{{ report.hasStrengths }}" hint-placeholder-val="{{ false }}">
+      <div style="animation: sdFadeUp .5s ease both; margin-bottom: 14px; border: 1px solid #EEF0F2; border-radius: 22px; padding: 20px; box-shadow: 0 6px 20px rgba(2,86,45,.05);">
+        <p style="font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: #02562d; text-transform: uppercase; margin: 0 0 14px;">Tes points forts</p>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <sc-for list="{{ report.strengths }}" as="s" hint-placeholder-count="2">
+            <div style="display: flex; gap: 11px; align-items: flex-start;">
+              <span style="flex: none; margin-top: 1px; width: 22px; height: 22px; border-radius: 999px; background: #E9F3ED; display: flex; align-items: center; justify-content: center;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </span>
+              <span style="font-size: 15px; line-height: 1.5; color: #2A322D;">{{ s }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- Axe -->
+      <div style="animation: sdFadeUp .5s ease both; margin-bottom: 14px; border: 1px solid #EEF0F2; border-radius: 22px; padding: 20px; box-shadow: 0 6px 20px rgba(2,86,45,.05);">
+        <p style="font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: #02562d; text-transform: uppercase; margin: 0 0 10px;">Ton axe de progression</p>
+        <p style="font-size: 15.5px; line-height: 1.6; margin: 0; color: #2A322D;">{{ report.axis }}</p>
+      </div>
+
+      <!-- Objectif -->
+      <div style="animation: sdFadeUp .5s ease both; margin-bottom: 14px; border-radius: 22px; padding: 22px; background: linear-gradient(150deg, #02562d, #0A6E3B); color: #fff; box-shadow: 0 12px 30px rgba(2,86,45,.22); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -30px; right: -20px; width: 130px; height: 130px; border-radius: 999px; background: rgba(255,255,255,.06);"></div>
+        <div style="position: relative; display: flex; align-items: center; gap: 9px; margin-bottom: 12px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.4" fill="#fff"></circle></svg>
+          <span style="font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;">Ton objectif — prochain match</span>
+        </div>
+        <p style="position: relative; font-size: 16.5px; line-height: 1.5; margin: 0 0 16px; font-weight: 500;">{{ report.objective }}</p>
+        <div style="position: relative; display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.2); padding: 7px 12px; border-radius: 999px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"></path><polyline points="9 12 11.5 14.5 15.5 10"></polyline></svg>
+          <span style="font-size: 12.5px; font-weight: 600;">À valider avec ton coach</span>
+        </div>
+      </div>
+
+      <!-- Pour aller plus loin (specialists only, conditional) -->
+      <sc-if value="{{ report.hasRecs }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top: 26px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="height: 1px; flex: 1; background: #EEF0F2;"></span>
+          <span style="font-size: 11px; font-weight: 600; letter-spacing: .12em; color: #9AA3A0; text-transform: uppercase;">Pour aller plus loin</span>
+          <span style="height: 1px; flex: 1; background: #EEF0F2;"></span>
+        </div>
+      </div>
+      <sc-for list="{{ report.recommendations }}" as="rec" hint-placeholder-count="1">
+        <div style="margin-bottom: 12px; border: 1px solid #E9F3ED; border-radius: 22px; padding: 20px; background: #FBFDFC;">
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <span style="flex: none; width: 40px; height: 40px; border-radius: 13px; background: #02562d; color: #fff; display: flex; align-items: center; justify-content: center;">
+              <sc-if value="{{ rec.isVideo }}" hint-placeholder-val="{{ true }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"></rect><path d="M16 10l5-3v10l-5-3"></path></svg></sc-if>
+              <sc-if value="{{ rec.isRecovery }}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 17.5 4 14 4 9.5A4.5 4.5 0 0 1 12 6.5 4.5 4.5 0 0 1 20 9.5c0 4.5-3 8-8 11.5z"></path><polyline points="8 11 11 11 12.5 8.5 14 13 15 11 16.5 11"></polyline></svg></sc-if>
+            </span>
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="font-size: 12px; font-weight: 500; color: #6B7280;">Le staff Seedinho recommande</span>
+                <span style="font-size: 10.5px; font-weight: 600; color: #02562d; background: #E9F3ED; padding: 2px 8px; border-radius: 999px;">Bientôt disponible</span>
+              </div>
+              <div style="font-size: 16px; font-weight: 700; color: #0E1B14; margin-top: 3px;">{{ rec.title }}</div>
+              <p style="font-size: 14px; line-height: 1.55; color: #2A322D; margin: 8px 0 0;">{{ rec.desc }}</p>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+      </sc-if>
+
+      <!-- player-facing actions -->
+      <button onClick="{{ goEvolution }}" style="width: 100%; margin-top: 14px; border: none; background: #02562d; color: #fff; font-family: inherit; font-size: 15px; font-weight: 600; padding: 16px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 9px; box-shadow: 0 10px 26px rgba(2,86,45,.2); transition: transform .12s ease;" style-active="transform: scale(.99);" style-hover="background: #0A6E3B;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><polyline points="7 14 11 9 14 12 20 5"></polyline></svg>
+        Voir mon évolution
+      </button>
+      <button onClick="{{ goRoster }}" style="width: 100%; margin-top: 10px; border: 1px solid #EEF0F2; background: #fff; color: #02562d; font-family: inherit; font-size: 15px; font-weight: 600; padding: 15px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s ease;" style-hover="background: #F7F8FA;" style-active="transform: scale(.99);">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        Voir un autre joueur
+      </button>
+
+      <!-- coach footer -->
+      <div style="margin-top: 22px; border: 1px dashed #D6DDD8; border-radius: 20px; padding: 16px; background: #FAFBFA;">
+        <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 12px;">
+          <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .1em; color: #9AA3A0; text-transform: uppercase;">Côté coach</span>
+        </div>
+        <button onClick="{{ sendToPlayer }}" style="width: 100%; border: 1px solid #E1EDE6; background: #fff; color: #02562d; font-family: inherit; font-size: 14px; font-weight: 600; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s ease;" style-hover="background: #F1F7F3;" style-active="transform: scale(.99);">
+          <sc-if value="{{ report.sent }}" hint-placeholder-val="{{ false }}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            Rapport envoyé à {{ report.name }}
+          </sc-if>
+          <sc-if value="{{ report.notSent }}" hint-placeholder-val="{{ true }}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+            Envoyer à mon joueur
+          </sc-if>
+        </button>
+        <p style="font-size: 11.5px; color: #9AA3A0; margin: 9px 2px 0; line-height: 1.4;">C'est vous qui décidez quoi partager — Seedinho ne remplace pas le coach.</p>
+        <button onClick="{{ goJoinFromReport }}" style="width: 100%; margin-top: 12px; border: none; background: #0E1B14; color: #fff; font-family: inherit; font-size: 14px; font-weight: 600; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform .12s ease;" style-active="transform: scale(.99);">
+          Essayer avec mon équipe
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ MON ÉVOLUTION (parle au joueur) ============ -->
+<sc-if value="{{ isEvolution }}" hint-placeholder-val="{{ false }}">
+<div style="animation: sdScreenIn .4s ease both;">
+  <div style="position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); border-bottom: 1px solid #EEF0F2; height: 56px; display: flex; align-items: center; padding: 0 14px;">
+    <button onClick="{{ goReport }}" aria-label="Retour" style="border: none; background: transparent; padding: 8px; margin: -8px; cursor: pointer; color: #0E1B14; display: flex;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <span style="position: absolute; left: 50%; transform: translateX(-50%); font-size: 14px; font-weight: 600; color: #0E1B14;">Mon évolution</span>
+  </div>
+
+  <div style="padding: 24px 22px 50px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 24px;">
+      <div style="flex: none; width: 56px; height: 56px; border-radius: 999px; overflow: hidden; border: 2px solid #E1EDE6; background: #E9F3ED; display: flex; align-items: center; justify-content: center;">
+        <sc-if value="{{ report.hasPhoto }}" hint-placeholder-val="{{ true }}"><img src="{{ report.photo }}" alt="" style="width:100%;height:100%;object-fit:cover;"></sc-if>
+        <sc-if value="{{ report.noPhoto }}" hint-placeholder-val="{{ false }}"><span style="font-size:22px;font-weight:700;color:#02562d;">{{ report.initial }}</span></sc-if>
+      </div>
+      <div>
+        <div style="font-size: 20px; font-weight: 800; letter-spacing: -0.015em;">{{ report.name }}</div>
+        <div style="font-size: 13px; color: #6B7280; margin-top: 2px;">Mon évolution · <span style="color:#9AA3A0;">données simulées</span></div>
+      </div>
+    </div>
+
+    <p style="font-size: 11.5px; font-weight: 600; letter-spacing: .1em; color: #9AA3A0; text-transform: uppercase; margin: 0 0 12px;">Mes 5 derniers matchs</p>
+    <div style="display: flex; flex-direction: column; gap: 11px;">
+      <sc-for list="{{ season.rows }}" as="r" hint-placeholder-count="5">
+        <div style="border: 1px solid #EEF0F2; border-radius: 20px; padding: 15px; box-shadow: 0 5px 16px rgba(2,86,45,.04);">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="flex: none; width: 42px; height: 42px; border-radius: 12px; background: #0E1B14; display: flex; align-items: center; justify-content: center; overflow: hidden;"><img src="{{ r.crest }}" alt="" style="width: 100%; height: 100%; object-fit: contain;"></span>
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 15px; font-weight: 700; color: #0E1B14;">{{ r.name }}</span>
+                <span style="{{ r.resStyle }}">{{ r.res }}</span>
+              </div>
+              <div style="font-size: 12px; color: #9AA3A0; margin-top: 2px;">{{ r.j }} · {{ r.date }}</div>
+            </div>
+          </div>
+          <p style="font-size: 13.5px; color: #2A322D; line-height: 1.5; margin: 12px 0 12px;">{{ r.summary }}</p>
+          <button onClick="{{ goReport }}" style="width: 100%; border: 1px solid #EEF0F2; background: #F7F8FA; color: #02562d; font-family: inherit; font-size: 13.5px; font-weight: 600; padding: 11px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: background .15s ease;" style-hover="background: #EEF3F0;" style-active="transform: scale(.99);">
+            Voir le rapport détaillé
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+          </button>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Bilan -->
+    <div style="margin-top: 22px; border: 1px solid #E9F3ED; border-radius: 22px; padding: 20px; background: #FBFDFC;">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 12px;">
+        <img src="assets/logo-icon-green.svg" alt="" style="height: 17px; width: auto;">
+        <span style="font-size: 11.5px; font-weight: 600; letter-spacing: .08em; color: #02562d; text-transform: uppercase;">Mon bilan</span>
+      </div>
+      <p style="font-size: 15px; line-height: 1.6; margin: 0 0 16px; color: #2A322D;">{{ season.progress }}</p>
+      <div style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;">
+        <span style="flex: none; margin-top: 1px; width: 20px; height: 20px; border-radius: 999px; background: #E9F3ED; display: flex; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+        <span style="font-size: 13.5px; color: #2A322D; line-height: 1.45;"><strong style="font-weight:600;">Objectif atteint :</strong> {{ season.achieved }}</span>
+      </div>
+      <sc-if value="{{ season.hasRecurring }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; gap: 10px; align-items: flex-start;">
+        <span style="flex: none; margin-top: 1px; width: 20px; height: 20px; border-radius: 999px; background: #F1EFE3; display: flex; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9A8B3E" stroke-width="2.6" stroke-linecap="round"><path d="M12 8v5M12 16v.01"></path></svg></span>
+        <span style="font-size: 13.5px; color: #2A322D; line-height: 1.45;"><strong style="font-weight:600;">Axe récurrent :</strong> {{ season.recurring }}</span>
+      </div>
+      </sc-if>
+    </div>
+
+    <button onClick="{{ goRoster }}" style="width: 100%; margin-top: 18px; border: 1px solid #EEF0F2; background: #fff; color: #02562d; font-family: inherit; font-size: 15px; font-weight: 600; padding: 15px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .15s ease;" style-hover="background: #F7F8FA;" style-active="transform: scale(.99);">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Voir un autre joueur
+    </button>
+
+    <!-- coach footer -->
+    <div style="margin-top: 20px; border: 1px dashed #D6DDD8; border-radius: 20px; padding: 16px; background: #FAFBFA;">
+      <div style="font-size: 10.5px; font-weight: 700; letter-spacing: .1em; color: #9AA3A0; text-transform: uppercase; margin-bottom: 12px;">Côté coach</div>
+      <button onClick="{{ goJoinFromEvolution }}" style="width: 100%; border: none; background: #0E1B14; color: #fff; font-family: inherit; font-size: 14px; font-weight: 600; padding: 13px; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform .12s ease;" style-active="transform: scale(.99);">
+        Essayer avec mon équipe
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<!-- ============ REJOINDRE SEEDINHO (parle au coach) ============ -->
+<sc-if value="{{ isJoin }}" hint-placeholder-val="{{ false }}">
+<div style="animation: sdScreenIn .4s ease both;">
+  <div style="position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); border-bottom: 1px solid #EEF0F2; height: 56px; display: flex; align-items: center; padding: 0 14px;">
+    <button onClick="{{ goJoinBack }}" aria-label="Retour" style="border: none; background: transparent; padding: 8px; margin: -8px; cursor: pointer; color: #0E1B14; display: flex;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <img src="assets/logo-text-green.svg" alt="Seedinho" style="height: 16px; position: absolute; left: 50%; transform: translateX(-50%);">
+  </div>
+
+  <div style="padding: 28px 24px 44px;">
+    <p style="font-size: 12px; font-weight: 600; letter-spacing: .12em; color: #02562d; text-transform: uppercase; margin: 0 0 12px;">REJOINDRE SEEDINHO GRATUITEMENT</p>
+    <h2 style="font-size: 25px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin: 0 0 10px; text-wrap: balance;">Envie de suivre votre équipe comme ça ?</h2>
+    <p style="font-size: 15px; color: #6B7280; line-height: 1.5; margin: 0 0 24px;">Écrivez-nous, on vous recontacte pour démarrer avec votre club — gratuitement.</p>
+
+    <!-- Carte d'instructions -->
+    <div style="background: #F7F8FA; border-radius: 20px; padding: 20px; margin-bottom: 24px;">
+      <div style="display: flex; align-items: center; gap: 9px; margin-bottom: 14px;">
+        <span style="flex: none; width: 32px; height: 32px; border-radius: 10px; background: #E9F3ED; display: flex; align-items: center; justify-content: center;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><polyline points="3 7 12 13 21 7"></polyline></svg></span>
+        <span style="font-size: 14px; font-weight: 700; color: #0E1B14;">Envoyez-nous un mail en précisant :</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 11px;">
+          <span style="flex: none; width: 20px; height: 20px; border-radius: 999px; background: #E9F3ED; display: flex; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          <span style="font-size: 14.5px; color: #2A322D;">le nom de votre club</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px;">
+          <span style="flex: none; width: 20px; height: 20px; border-radius: 999px; background: #E9F3ED; display: flex; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          <span style="font-size: 14.5px; color: #2A322D;">la catégorie (U13, U15…)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 11px;">
+          <span style="flex: none; width: 20px; height: 20px; border-radius: 999px; background: #E9F3ED; display: flex; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
+          <span style="font-size: 14.5px; color: #2A322D;">la division</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bouton principal mailto -->
+    <a href="{{ join.mailto }}" style="width: 100%; box-sizing: border-box; text-decoration: none; border: none; background: #02562d; color: #fff; font-family: inherit; font-size: 16px; font-weight: 600; padding: 17px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 26px rgba(2,86,45,.22); transition: transform .12s ease, background .15s ease;" style-active="transform: scale(.98);" style-hover="background: #0A6E3B;">
+      Écrire à Seedinho
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+    </a>
+    <p style="text-align: center; font-size: 11.5px; color: #9AA3A0; margin: 14px 0 0; line-height: 1.4;">Votre appli mail s'ouvre, déjà pré-remplie — il ne reste qu'à envoyer.</p>
+
+    <!-- Fallback : adresse en clair + copier -->
+    <div style="margin-top: 28px; border: 1px solid #EEF0F2; border-radius: 18px; padding: 16px; display: flex; align-items: center; gap: 12px;">
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 11px; font-weight: 600; letter-spacing: .06em; color: #9AA3A0; text-transform: uppercase; margin-bottom: 3px;">Ou par mail direct</div>
+        <div style="font-size: 14px; font-weight: 600; color: #0E1B14; overflow: hidden; text-overflow: ellipsis;">seedinho.contact@gmail.com</div>
+      </div>
+      <button onClick="{{ copyEmail }}" style="flex: none; border: 1px solid #E1EDE6; background: #fff; color: #02562d; font-family: inherit; font-size: 13px; font-weight: 600; padding: 9px 13px; border-radius: 11px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background .15s ease;" style-hover="background: #F1F7F3;" style-active="transform: scale(.96);">
+        <sc-if value="{{ join.copied }}" hint-placeholder-val="{{ false }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#02562d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Copié
+        </sc-if>
+        <sc-if value="{{ join.notCopied }}" hint-placeholder-val="{{ true }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>
+          Copier l'adresse
+        </sc-if>
+      </button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    screen: 'landing',
+    playerId: 1,
+    joinFrom: 'report',
+    demoPlaying: false,
+    demoTime: 0,
+    demoDuration: 141,
+    demoStarted: false,
+    reveal: 0,
+    adv: 0,
+    sent: false,
+    joinCopied: false,
+    advModalOpen: false,
+  };
+
+  TRANSCRIPT = "Mon numéro 1, le gardien, a fait un bon match : sortie aérienne intéressante, jeu au pied aussi. Là où il aurait pu faire mieux : le choix, l'utilisation du ballon au pied. Mon 2 : match référence, techniquement pas de souci, il a déséquilibré le bloc après 2-3 un-contre-un. Mon 3 est sorti très vite sur un coup, match compliqué à juger. Mon 4, central, à l'aise, correct au pied court et long, il s'est sorti du marquage plusieurs fois ; à lui d'être décisif sur coups de pied arrêtés. Mon 5, un an de moins, doit beaucoup plus utiliser son pied gauche, surtout à central gauche. Mon 6 a couru dans tous les sens, il a perdu de l'utilité en fin de match. Mon 7, côté droit, match intéressant, beaucoup de ballons touchés mais manque de déséquilibre. Mon 8 : box to box, profondeur, prend l'espace, joue court et long — super match. Comme mon 10 à côté, en 4-3-3. Mon ailier gauche : match assez terne offensivement — ce n'était pas mes trois attaquants de base. Défaite 2-0. Et mon 9 : peu de ballons, profil faux 9, pas assez combiné. En passant, deux joueurs U13 : bonne première impression dans le 11.";
+
+  SPECIALIST_CATALOG = {
+    video: { title: 'Analyse vidéo perso' },
+    recovery: { title: 'Récupération' },
+  };
+
+  JOIN_MAILTO = 'mailto:seedinho.contact@gmail.com?subject=' +
+    encodeURIComponent('Rejoindre Seedinho — [nom du club]') + '&body=' +
+    encodeURIComponent('Bonjour,\n\nJe souhaite tester Seedinho avec mon équipe.\n\n- Nom du club : \n- Catégorie : \n- Division : \n\nMerci !');
+
+  SEASON_OPP = [
+    { j: 'J5', date: '12 avr.', crest: 'assets/crests/vallieres.png', name: 'FC Vallières', res: 'V 3-1', w: 'V' },
+    { j: 'J6', date: '19 avr.', crest: 'assets/crests/lorient.png', name: 'US Lorient', res: 'N 2-2', w: 'N' },
+    { j: 'J7', date: '26 avr.', crest: 'assets/crests/etoile.png', name: 'Étoile Sportive', res: 'V 1-0', w: 'V' },
+    { j: 'J8', date: '03 mai', crest: 'assets/crests/horizon.png', name: 'FC Horizon', res: 'D 0-1', w: 'D' },
+    { j: 'J9', date: '10 mai', crest: 'assets/crests/riviere.png', name: 'AC Rivière', res: 'D 0-2', w: 'D' },
+  ];
+
+  PLAYERS = [
+    { id:1, num:1, name:'Lucas', poste:'Gardien', photo:'assets/players/lucas.png',
+      pills:['Jeu aérien maîtrisé','Propre au pied'],
+      summary:"Bon match dans les cages. Ta sortie dans les airs était bien gérée et t'es propre au pied. Le truc à bosser, c'est le choix quand tu as le ballon : bien voir la meilleure solution avant de la jouer.",
+      strengths:['Ton jeu aérien — une sortie bien maîtrisée.','Ta technique au pied — c\u2019est propre.'],
+      axis:"Le choix de la relance. Techniquement t'as tout ; maintenant c'est de choisir la bonne option, celle qui aide vraiment l'équipe.",
+      objective:"Sur chaque relance, regarde tes options avant de recevoir, puis joue la solution la plus sûre.",
+      specialists:[{ type:'video', desc:"Revoir tes relances au calme pour repérer, action par action, les meilleures options." }],
+      season:{ rows:['Match propre, relances maîtrisées.','Bon jeu au pied, un choix à revoir.','Ta meilleure sortie de la saison.','Peu sollicité, propre sur tes appuis.','Bon match, à travailler le choix de relance.'],
+        progress:"Tu progresses sur la propreté de tes relances ; le prochain palier, c'est décider plus vite.", achieved:"gagner en propreté au pied.", recurring:"le choix de la relance (revenu sur plusieurs matchs)." } },
+
+    { id:2, num:2, name:'Rayan', poste:'Latéral droit', photo:'assets/players/rayan.png',
+      pills:['Match référence','2-3 un-contre-un gagnés'],
+      summary:"Gros match, sûrement le meilleur du groupe. Techniquement nickel, et t'as fait mal avec tes un-contre-un : 2-3 fois t'as cassé leur défense.",
+      strengths:['Ta technique, rien à dire.','Tes un-contre-un qui font la diff\u2019.'],
+      axis:"Pas d'axe à retenir sur ce match : c'était ta référence. Le vrai objectif, c'est de rejouer à ce niveau.",
+      objective:"Rejoue à ce niveau et transforme un débordement en occasion franche.",
+      specialists:[],
+      season:{ rows:['Actif sur ton côté, quelques débordements.','Un-contre-un tranchants, tu fais mal.','Match sérieux, moins de déchets.','Bon apport, une passe décisive.','Match référence, tu casses leur bloc.'],
+        progress:"Tu montes en puissance sur tes un-contre-un ; il te reste à finir plus souvent tes débordements.", achieved:"t'imposer dans ton couloir.", recurring:"la dernière passe après débordement." } },
+
+    { id:3, num:3, name:'Enzo', poste:'Latéral gauche', photo:'assets/players/enzo.png',
+      pills:['Match écourté','Priorité récup'],
+      summary:"Sorti tôt sur un coup, ton match a été trop court pour être jugé. Le plus important maintenant, c'est que tu reviennes bien.",
+      strengths:[],
+      contextText:"Sorti tôt sur un coup, ton match a été trop court pour être jugé — ça n'efface rien de ce que tu sais faire, et ça ne juge rien. On regarde vers ton retour.",
+      axis:"Revenir en forme, sans forcer.",
+      objective:"Soigne-toi, récupère, et reviens à 100 %.",
+      specialists:[{ type:'recovery', desc:"On t'accompagne dans les étapes de ta récupération, pour revenir au bon moment sans forcer." }],
+      season:{ rows:['Défensivement solide, propre.','Bon match, tu tiens ton aile.','Match discret mais sérieux.','Présent, quelques montées.','Sorti sur blessure — on te retrouve vite.'],
+        progress:"Ta saison était régulière avant ce coup ; l'objectif, c'est de revenir au même niveau, en forme.", achieved:"fiabilité défensive sur ton côté.", recurring:null } },
+
+    { id:4, num:4, name:'Noah', poste:'Défenseur central', photo:'assets/players/noah.png',
+      pills:['À l\u2019aise, court & long','Se démarque'],
+      summary:"Match solide derrière. T'es à l'aise, propre au pied (court comme long), et tu t'es libéré de ton marquage plusieurs fois.",
+      strengths:['Ton aisance technique, court et long.','Tu sais te démarquer de ton défenseur.'],
+      axis:"Être décisif sur les coups de pied arrêtés — c'est ce qui te ferait passer au-dessus.",
+      objective:"Sur le prochain corner, va chercher le ballon de la tête.",
+      specialists:[],
+      season:{ rows:['Solide dans l\u2019axe, propre au pied.','Bon match, tu ressors bien.','Quelques montées sur CPA.','Match sérieux derrière.','À l\u2019aise, se démarque — reste à conclure sur CPA.'],
+        progress:"Tu deviens de plus en plus présent sur les phases arrêtées ; il te reste à être décisif.", achieved:"aisance technique confirmée.", recurring:"l'impact sur les coups de pied arrêtés." } },
+
+    { id:5, num:5, name:'Gabriel', poste:'Défenseur central gauche', photo:'assets/players/gabriel.png',
+      pills:['Un an au-dessus','Poste exigeant'],
+      summary:"Tu joues un an au-dessus de ton âge, à un poste qui demande le pied gauche. Pas simple — et tu tiens le coup.",
+      strengths:[],
+      contextText:"Tu joues un an au-dessus de ton âge, à un poste qui demande le pied gauche. C'est un vrai défi, et tu le relèves match après match.",
+      axis:"Ton pied gauche. À ton poste c'est essentiel : plus tu l'utilises, plus tu montes.",
+      objective:"À chaque relance courte possible, joue du pied gauche.",
+      specialists:[],
+      season:{ rows:['Match d\u2019apprentissage, un an au-dessus.','Tu tiens le poste, encore beaucoup de droit.','Quelques relances du gauche, bien.','Progrès nets au pied faible.','Tu tiens le coup à central gauche.'],
+        progress:"Ton pied gauche progresse match après match ; continue, c'est ce qui te fera monter.", achieved:"tenir un poste exigeant, plus jeune.", recurring:"le pied gauche." } },
+
+    { id:6, num:6, name:'Malik', poste:'Milieu', photo:'assets/players/malik.png',
+      pills:['Gros volume de course'],
+      summary:"T'as mis beaucoup d'énergie et beaucoup couru. Le souci : à courir partout, t'as perdu en impact sur la fin.",
+      strengths:[],
+      axis:"Cours juste, pas juste beaucoup — place-toi bien pour que chaque course serve à quelque chose.",
+      objective:"Reste dans ta zone et choisis tes courses pour peser tout le match.",
+      specialists:[{ type:'video', desc:"Repère les courses qui servent vraiment l'équipe, et celles que tu peux garder." }],
+      season:{ rows:['Gros volume, un peu partout.','Beaucoup d\u2019énergie, placement à affiner.','Match plus discipliné.','Bien en place, utile.','Beaucoup couru, moins utile en fin de match.'],
+        progress:"Tu apprends à courir juste plutôt que beaucoup ; ton placement s'améliore.", achieved:"générosité dans l'effort.", recurring:"le placement en fin de match." } },
+
+    { id:7, num:7, name:'Théo', poste:'Ailier droit', photo:'assets/players/theo.png',
+      pills:['Beaucoup de ballons touchés'],
+      summary:"Bon match, t'as beaucoup touché le ballon. Ce qu'il a manqué, c'est le petit truc qui fait la diff' devant : provoquer, éliminer ton défenseur.",
+      strengths:['T\u2019étais bien dans le jeu, beaucoup de ballons touchés.'],
+      axis:"Créer du déséquilibre — ose le un-contre-un, provoque, élimine.",
+      objective:"Dès que tu reçois dans ton couloir, tente le un-contre-un.",
+      specialists:[],
+      season:{ rows:['Beaucoup de ballons, peu de prises de risque.','Tu provoques plus, ça paie.','Match discret offensivement.','Bon apport, un débordement clé.','Beaucoup de ballons, manque le déséquilibre.'],
+        progress:"Tu touches beaucoup de ballons ; le déclic, c'est d'oser plus souvent le un-contre-un.", achieved:"disponibilité et présence dans le jeu.", recurring:"oser faire la différence." } },
+
+    { id:8, num:8, name:'Ibrahim', poste:'Milieu box-to-box', photo:'assets/players/ibrahim.png',
+      pills:['Milieu complet','Super match'],
+      summary:"Gros match du début à la fin. Box to box, t'as pris la profondeur, occupé les espaces, joué court et long — un vrai milieu complet.",
+      strengths:['Milieu complet, présent des deux surfaces.','Tu prends l\u2019espace et la profondeur.','Ta palette technique, court et long.'],
+      axis:"Pas d'axe sur ce match : gros match complet. L'objectif, c'est de confirmer ce niveau.",
+      objective:"Rejoue un match aussi complet et ajoute une action décisive (passe clé ou frappe).",
+      specialists:[],
+      season:{ rows:['Milieu complet, déjà influent.','Gros volume, jeu court et long.','Match sérieux, tu ressors les ballons.','Très présent des deux côtés.','Super match, box to box.'],
+        progress:"Tu confirmes ton statut de milieu complet ; il te reste la dernière touche décisive.", achieved:"maîtrise des deux surfaces.", recurring:"être décisif dans le dernier tiers." } },
+
+    { id:9, num:9, name:'Adam', poste:'Attaquant (faux 9)', photo:'assets/players/adam.png',
+      pills:['U13 · 1er match dans le 11'],
+      summary:"Peu de ballons touchés. En faux 9 — l'attaquant qui décroche pour créer le jeu — tu as manqué des combinaisons avec tes partenaires. Et c'était ton premier match dans le 11, un an au-dessus.",
+      strengths:['Bonne première impression pour un premier match dans le 11.'],
+      contextText:"Premier match dans le 11, un an au-dessus, en faux 9 (l'attaquant qui décroche pour créer le jeu). Peu de ballons et pas encore assez de combinaisons — normal, c'est un rôle qui demande de l'adaptation.",
+      axis:"Connecte-toi plus au jeu — combine, joue en remise, rends-toi dispo entre les lignes.",
+      objective:"Cherche 3-4 combinaisons avec tes milieux (une-deux, remises).",
+      specialists:[],
+      season:{ rows:['Premiers pas, peu de ballons.','Tu combines un peu plus.','Match d\u2019adaptation en faux 9.','Quelques remises intéressantes.','Peu de ballons, pas assez combiné.'],
+        progress:"Tu prends tes repères dans le 11 ; tes combinaisons progressent doucement.", achieved:"bonne première impression, plus jeune.", recurring:"te connecter au jeu." } },
+
+    { id:10, num:10, name:'Mattéo', poste:'Milieu', photo:'assets/players/matteo.png',
+      pills:['Super match'],
+      summary:"Gros match aussi pour toi au milieu, dans la lignée de l'équipe dans ce 4-3-3.",
+      strengths:['Une perf de haut niveau au milieu — « super match » dixit le coach.'],
+      axis:"Pas d'axe sur ce match : belle perf. L'objectif, c'est de reproduire ce niveau.",
+      objective:"Reproduis ce niveau et ajoute une touche décisive.",
+      specialists:[],
+      season:{ rows:['Bon match au milieu, propre.','Tu montes bien, quelques occasions.','Match sérieux, complémentaire.','Belle influence dans l\u2019entrejeu.','Gros match, dans la lignée de l\u2019équipe.'],
+        progress:"Tu joues à un bon niveau au milieu ; ajoute des actions décisives pour passer un cap.", achieved:"régularité au milieu.", recurring:"la touche décisive." } },
+
+    { id:11, num:11, name:'Younes', poste:'Ailier gauche', photo:'assets/players/younes.png',
+      pills:['U13 · 1er match dans le 11'],
+      summary:"Match plus discret devant, dans une attaque qui n'était pas le trio habituel, pour ton premier match dans le 11 (un an au-dessus). L'équipe a créé sans conclure.",
+      strengths:['Bonne première impression pour un premier match dans le 11.'],
+      contextText:"Match plus discret devant, dans une attaque remaniée, et pour ton premier match dans le 11 (un an au-dessus). Contexte difficile — ce match ne te définit pas.",
+      axis:"Implique-toi plus dans le jeu offensif, et prends tes repères.",
+      objective:"Réclame le ballon et tente une action offensive dès que tu peux.",
+      specialists:[],
+      season:{ rows:['Premiers pas dans le 11.','Tu prends confiance côté gauche.','Match d\u2019adaptation.','Quelques appels intéressants.','Match plus discret, attaque remaniée.'],
+        progress:"Tu prends tes repères dans le 11 ; ton implication offensive grandit.", achieved:"bonne première impression, plus jeune.", recurring:"t'impliquer dans le jeu offensif." } },
+  ];
+
+  getRecommendations(player) {
+    return (player.specialists || []).map(s => ({
+      title: this.SPECIALIST_CATALOG[s.type].title,
+      desc: s.desc,
+      isVideo: s.type === 'video',
+      isRecovery: s.type === 'recovery',
+    }));
+  }
+  getPlayer(id) { return this.PLAYERS.find(p => p.id === id) || this.PLAYERS[0]; }
+
+  go(screen) { this.setState({ screen }); try { window.scrollTo(0, 0); } catch(e){} }
+
+  // ---------- audio + reveal engine ----------
+  setAudioRef(el) {
+    if (!el || el === this._audio) return;
+    this._audio = el;
+    el.addEventListener('loadedmetadata', () => {
+      const d = el.duration && isFinite(el.duration) ? el.duration : 141;
+      this.setState({ demoDuration: d });
+      const saved = parseFloat(localStorage.getItem('seedinho_demo_time') || '0');
+      if (saved > 0 && saved < this.CAP - 0.5) { el.currentTime = saved; this.setState({ demoTime: saved }); }
+    });
+    el.addEventListener('timeupdate', () => {
+      if (el.currentTime >= this.CAP) { this.finishDemo(); return; }
+      this.setState({ demoTime: el.currentTime });
+      const now = Date.now();
+      if (now - (this._lastSave || 0) > 500) { this._lastSave = now; localStorage.setItem('seedinho_demo_time', String(el.currentTime)); }
+    });
+    el.addEventListener('play', () => {
+      if (this._finished) {
+        this._finished = false; this._advStarted = false; this._modalShown = false;
+        clearInterval(this._rev); this._rev = null;
+        this.setState({ demoTime: 0, reveal: 0, adv: 0, advModalOpen: false });
+      }
+      this.setState({ demoPlaying: true });
+      this.startReveal();
+    });
+    el.addEventListener('pause', () => this.setState({ demoPlaying: false }));
+    el.addEventListener('ended', () => this.finishDemo());
+  }
+  // fin de lecture (cap 20 s atteint) : remet le curseur à 0:00, réinitialise onde + bouton pour relancer
+  finishDemo() {
+    const a = this._audio;
+    if (a) { try { a.pause(); a.currentTime = 0; } catch(e){} }
+    clearInterval(this._rev); this._rev = null;
+    this._finished = true;
+    localStorage.setItem('seedinho_demo_time', '0');
+    if (!this._modalShown) { this._modalShown = true; this.startAdv(); }
+    this.setState({ demoPlaying: false, demoTime: this.CAP, reveal: 1, advModalOpen: true });
+  }
+  toggleDemo() { const a = this._audio; if (!a) return; if (a.paused) a.play(); else a.pause(); }
+  setTranscriptRef(el) { this._tr = el; }
+
+  // carrousel landing : auto-scroll doux, en pause pendant l'interaction
+  setCarRef(el) {
+    if (el === this._car) return;
+    if (!el) { clearInterval(this._carI); this._carI = null; this._car = null; return; }
+    this._car = el;
+    const pause = () => { this._carPaused = true; clearTimeout(this._carT); this._carT = setTimeout(() => { this._carPaused = false; }, 2600); };
+    el.addEventListener('pointerdown', pause);
+    el.addEventListener('touchstart', pause, { passive: true });
+    el.addEventListener('wheel', pause, { passive: true });
+    clearInterval(this._carI);
+    this._carI = setInterval(() => {
+      const w = this._car;
+      if (!w || this._carPaused || w.scrollWidth <= w.clientWidth) return;
+      w.scrollLeft += 0.4;
+      if (w.scrollLeft >= w.scrollWidth / 2) w.scrollLeft -= w.scrollWidth / 2;
+    }, 16);
+  }
+  closeAdvModal() { this.setState({ advModalOpen: false }); }
+
+  CAP = 20; // on ne lit que les 20 premières secondes de l'audio, mais tout le texte défile dessus
+  get SENTENCES() {
+    if (!this._sentences) this._sentences = (this.TRANSCRIPT.match(/[^.?!]+[.?!]+/g) || [this.TRANSCRIPT]).map(s => s.trim());
+    return this._sentences;
+  }
+  startReveal() {
+    if (this._rev) return;
+    this.setState({ demoStarted: true });
+    this._startWall = performance.now();
+    this._rev = setInterval(() => {
+      const a = this._audio;
+      const t = a ? a.currentTime : 0;
+      const reveal = Math.min(1, Math.max(t, 0) / this.CAP);
+      this.setState({ reveal });
+      if (reveal >= 0.99 && !this._modalShown) { this._modalShown = true; this.startAdv(); this.setState({ advModalOpen: true }); }
+      if (reveal >= 1) { clearInterval(this._rev); this._rev = null; }
+    }, 80);
+  }
+  startAdv() {
+    clearInterval(this._c);
+    this.setState({ adv: 0 });
+    const t0 = Date.now();
+    this._c = setInterval(() => {
+      const p = Math.min(1, (Date.now() - t0) / 1100);
+      this.setState({ adv: 1 - Math.pow(1 - p, 3) });
+      if (p >= 1) clearInterval(this._c);
+    }, 30);
+  }
+  componentDidUpdate() { if (this._tr && this.state.demoPlaying) this._tr.scrollTop = this._tr.scrollHeight; }
+  componentWillUnmount() { clearInterval(this._rev); clearInterval(this._c); clearInterval(this._carI); clearTimeout(this._sentT); clearTimeout(this._carT); }
+
+  // ---------- coach actions ----------
+  sendToPlayer() {
+    this.setState({ sent: true });
+    clearTimeout(this._sentT);
+    this._sentT = setTimeout(() => this.setState({ sent: false }), 2600);
+  }
+  goJoin(from) { this.setState({ screen: 'join', joinFrom: from, joinCopied: false }); try { window.scrollTo(0, 0); } catch(e){} }
+  copyEmail() {
+    const addr = 'seedinho.contact@gmail.com';
+    const done = () => { this.setState({ joinCopied: true }); clearTimeout(this._copyT); this._copyT = setTimeout(() => this.setState({ joinCopied: false }), 2200); };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(addr).then(done, () => this._fallbackCopy(addr, done)); }
+      else this._fallbackCopy(addr, done);
+    } catch(e) { this._fallbackCopy(addr, done); }
+  }
+  _fallbackCopy(text, done) {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      done();
+    } catch(e) { done(); }
+  }
+
+  fmtClock(sec) {
+    sec = Math.max(0, Math.floor(sec || 0));
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return m + ':' + (s < 10 ? '0' + s : s);
+  }
+  fmtHM(mins) {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h <= 0) return m + ' min';
+    return h + ' h ' + (m < 10 ? '0' + m : m);
+  }
+
+  renderVals() {
+    const st = this.state;
+    const dur = st.demoDuration || 141;
+    const reveal = st.reveal;
+    const revealed = this.TRANSCRIPT.slice(0, Math.floor(reveal * this.TRANSCRIPT.length));
+
+    // checklist tied to reveal
+    const thr = [0.06, 0.4, 0.72, 0.99];
+    const clabels = ['Transcription de la note vocale', 'Identification des joueurs', 'Analyse des observations', 'Génération des rapports'];
+    const checklist = clabels.map((label, i) => {
+      const done = st.demoStarted && reveal >= thr[i];
+      return {
+        label, done, pending: !done,
+        rowStyle: 'display:flex;align-items:center;gap:12px;padding:12px 15px;border-radius:14px;transition:background .3s ease;background:' + (done ? '#F1F7F3' : '#F7F8FA') + ';',
+        iconStyle: 'flex:none;width:24px;height:24px;border-radius:999px;display:flex;align-items:center;justify-content:center;transition:background .3s ease;background:' + (done ? '#02562d' : '#EAECEA') + ';',
+        labelStyle: 'font-size:14.5px;font-weight:' + (done ? '600' : '500') + ';color:' + (done ? '#0E1B14' : '#9AA3A0') + ';transition:color .3s ease;',
+      };
+    });
+
+    // waveform tied to audio time
+    const audioProg = Math.min(1, st.demoTime / this.CAP);
+    const heights = [24,40,60,80,52,70,90,44,64,100,58,76,36,68,92,50,80,62,42,88,54,72,96,46,66,84,38,74,58,90,48,70,60,82,44,64,100,52,78,42];
+    const playState = st.demoPlaying ? 'running' : 'paused';
+    const bars = heights.map((h, i) => {
+      const played = (i / heights.length) <= audioProg;
+      return { style: 'flex:1;min-width:2px;border-radius:2px;transform-origin:bottom;height:' + h + '%;background:' + (played ? '#02562d' : '#D7DDD9') + ';animation:sdWave ' + (0.6 + (i % 5) * 0.12).toFixed(2) + 's ease-in-out ' + (i * 0.045).toFixed(2) + 's infinite;animation-play-state:' + playState + ';' };
+    });
+
+    // AdvantageStrip (count-up) affiché en modale
+    const ac = st.adv;
+
+    // landing carrousel (couleur, prénom + n°) — dupliqué pour boucle fluide
+    const carBase = this.PLAYERS.map(p => ({
+      hasPhoto: !!p.photo, noPhoto: !p.photo, photo: p.photo, initial: p.name.charAt(0),
+      name: p.name, num: p.num,
+    }));
+    const landingGrid = carBase.concat(carBase);
+
+    // roster
+    const roster = this.PLAYERS.map(p => ({
+      hasPhoto: !!p.photo, noPhoto: !p.photo, photo: p.photo, initial: p.name.charAt(0),
+      name: p.name, poste: p.poste, num: p.num,
+      open: () => { this.setState({ playerId: p.id, screen: 'report', sent: false }); try { window.scrollTo(0, 0); } catch(e){} },
+      cardStyle: 'display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:13px;border-radius:20px;cursor:pointer;font-family:inherit;transition:transform .12s ease, box-shadow .2s ease;border:1px solid ' + (p.id === 1 ? '#D8EADF' : '#EEF0F2') + ';background:' + (p.id === 1 ? '#FBFDFC' : '#fff') + ';box-shadow:0 6px 18px rgba(2,86,45,' + (p.id === 1 ? '.08' : '.04') + ');',
+      avatarStyle: 'width:52px;height:52px;border-radius:999px;overflow:hidden;background:#E9F3ED;display:flex;align-items:center;justify-content:center;',
+    }));
+
+    // current player report
+    const pl = this.getPlayer(st.playerId);
+    const recs = this.getRecommendations(pl);
+    const report = {
+      name: pl.name, num: pl.num, poste: pl.poste,
+      hasPhoto: !!pl.photo, noPhoto: !pl.photo, photo: pl.photo, initial: pl.name.charAt(0),
+      pills: pl.pills || [], hasPills: (pl.pills || []).length > 0,
+      summary: pl.summary,
+      strengths: pl.strengths || [], hasStrengths: (pl.strengths || []).length > 0,
+      hasContext: !!pl.contextText, contextText: pl.contextText || '',
+      axis: pl.axis, objective: pl.objective,
+      recommendations: recs, hasRecs: recs.length > 0,
+      sent: st.sent, notSent: !st.sent,
+    };
+
+    // evolution rows
+    const sd = pl.season;
+    const opp = this.SEASON_OPP;
+    const resStyleFor = (w) => {
+      const bg = w === 'V' ? '#E9F3ED' : '#F1F2F1';
+      const col = w === 'V' ? '#02562d' : '#6B7280';
+      return 'font-size:11px;font-weight:700;color:' + col + ';background:' + bg + ';padding:2px 8px;border-radius:7px;font-variant-numeric:tabular-nums;';
+    };
+    const rows = opp.map((o, i) => ({
+      j: o.j, date: o.date, crest: o.crest, name: o.name, res: o.res, resStyle: resStyleFor(o.w),
+      summary: sd.rows[i],
+    }));
+    const season = {
+      rows,
+      progress: sd.progress, achieved: sd.achieved,
+      recurring: sd.recurring || '', hasRecurring: !!sd.recurring,
+    };
+
+    return {
+      isLanding: st.screen === 'landing',
+      isDemo: st.screen === 'demo',
+      isRoster: st.screen === 'roster',
+      isReport: st.screen === 'report',
+      isEvolution: st.screen === 'evolution',
+      isJoin: st.screen === 'join',
+      goLanding: () => this.go('landing'),
+      goDemo: () => this.go('demo'),
+      goRoster: () => this.go('roster'),
+      goReport: () => this.go('report'),
+      goEvolution: () => this.go('evolution'),
+      goJoinFromReport: () => this.goJoin('report'),
+      goJoinFromEvolution: () => this.goJoin('evolution'),
+      goJoinBack: () => this.go(st.joinFrom || 'report'),
+      toggleDemo: () => this.toggleDemo(),
+      closeAdvModal: () => this.closeAdvModal(),
+      setCarRef: (el) => this.setCarRef(el),
+      sendToPlayer: () => this.sendToPlayer(),
+      copyEmail: () => this.copyEmail(),
+      setAudioRef: (el) => this.setAudioRef(el),
+      setTranscriptRef: (el) => this.setTranscriptRef(el),
+      demo: {
+        playing: st.demoPlaying, notPlaying: !st.demoPlaying,
+        idle: !st.demoStarted,
+        caret: st.demoStarted && reveal < 1,
+        showCta: st.demoStarted,
+        revealed,
+        time: this.fmtClock(Math.min(st.demoTime, this.CAP)) + ' / ' + this.fmtClock(this.CAP),
+        checklist, bars,
+        modalOpen: st.advModalOpen,
+        adv1: (ac >= 1 ? 2 : Math.round(2 * ac)) + ' min',
+        adv2: Math.round(28 * ac) + ' min',
+        adv3: '≈ ' + this.fmtHM(Math.round(140 * ac)),
+        adv4: Math.round(9 * ac) + '/11',
+      },
+      landingGrid, roster, report, season,
+      join: { mailto: this.JOIN_MAILTO, copied: st.joinCopied, notCopied: !st.joinCopied },
+    };
+  }
+}
+</script>
+</body>
+</html>
